@@ -29,7 +29,7 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 2. **Add file → Upload files** → select **all the files** in this folder → **Commit changes**.
 3. Netlify publishes automatically (Build command: empty, Publish directory: `.`).
 4. In Netlify: **Domain management → HTTPS** — make sure the certificate is active. Netlify then automatically redirects every `http://` visit to `https://` (forced HTTPS), and the site also sends a 2-year HSTS header so browsers always use HTTPS.
-5. Contact form: messages are emailed to rochelle@finlume.co.za by **FormSubmit** (built into the page code, no Netlify setting needed). The very first message triggers a one-time **activation email** from FormSubmit to rochelle@ — click **Activate Form** in it. FormSubmit then also sends a random alias; you can put it in `content.py` (`FORM_TO`) and rebuild to hide the email address from the page code.
+5. Contact form: messages are emailed to info@finlume.co.za by **FormSubmit** (built into the page code, no Netlify setting needed). The very first message triggers a one-time **activation email** from FormSubmit to info@ — click **Activate Form** in it. FormSubmit then also sends a random alias; you can put it in `content.py` (`FORM_TO`) and rebuild to hide the email address from the page code.
 
 ## What's built in
 
