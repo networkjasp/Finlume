@@ -21,15 +21,25 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 | `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` | Browser-tab and phone icons |
 | `profile-cover.jpg` | Company profile cover shown on the Home page |
 | `netlify.toml` | Netlify settings: security headers, short URLs, rate limits, blocked hacking paths |
+| `netlify/functions/contact.mjs` | Sends contact-form messages to info@ (the only folder in the site — upload it too) |
 | `sitemap.xml`, `robots.txt`, `security.txt` | For search engines and security researchers |
 
 ## Upload to GitHub → Netlify
 
 1. In the GitHub repository, delete the old website files.
-2. **Add file → Upload files** → select **all the files** in this folder → **Commit changes**.
+2. **Add file → Upload files** → **drag** everything in this folder (all files **and the `netlify` folder**) onto the page → **Commit changes**. Afterwards the repo must show `netlify/functions/contact.mjs`.
 3. Netlify publishes automatically (Build command: empty, Publish directory: `.`).
 4. In Netlify: **Domain management → HTTPS** — make sure the certificate is active. Netlify then automatically redirects every `http://` visit to `https://` (forced HTTPS), and the site also sends a 2-year HSTS header so browsers always use HTTPS.
-5. Contact form: messages are emailed to info@finlume.co.za by **FormSubmit** (built into the page code, no Netlify setting needed). The very first message triggers a one-time **activation email** from FormSubmit to info@ — click **Activate Form** in it. FormSubmit then also sends a random alias; you can put it in `content.py` (`FORM_TO`) and rebuild to hide the email address from the page code.
+5. Contact form, one-time setup (works on the free Netlify plan, no "Forms" feature needed):
+   - The form is sent by a small Netlify Function (`netlify/functions/contact.mjs`) which emails each enquiry to **info@finlume.co.za** through the Finlume mailbox at HostAfrica.
+   - In Netlify: **Site configuration → Environment variables → Add a variable**, and add:
+     - `SMTP_USER` = `rochelle@finlume.co.za`
+     - `SMTP_PASS` = the password of that mailbox (mark it **Contains secret values**)
+     - `MAIL_TO` = `info@finlume.co.za`
+     - `FORM_SITE_NAME` = `Finlume`
+   - Then **Deploys → Trigger deploy → Deploy site**.
+   - The password lives only in Netlify, never in the website files.
+   - If sending ever fails, the visitor gets two buttons (**Send by email** / **Send on WhatsApp**) with the message already filled in, so no enquiry is lost.
 
 ## What's built in
 
@@ -41,13 +51,13 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 
 **Cookie notice:** the site uses no advertising or tracking cookies. The notice explains this and remembers the visitor's choice on their device.
 
-**Contact form:** checks every field (required fields, real email format, phone format, minimum lengths, POPIA consent) before sending. Spam protection: a hidden honeypot field (FormSubmit `_honey`), a block on instant "bot-speed" submissions, a 60-second pause between submissions, and a Netlify rate limit on the contact page.
+**Contact form:** checks every field (required fields, real email format, phone format, minimum lengths, POPIA consent) before sending. Spam protection: a hidden honeypot field, a block on instant "bot-speed" submissions, a 60-second pause between submissions, server-side checks of every field, a block on requests from other websites, and Netlify rate limits (contact page, and max 5 submissions per minute per IP).
 
 **Security:**
 - No secrets, passwords or API keys in the website code (checked).
 - Strict Content-Security-Policy: each page only runs its own fingerprinted code; injected scripts are blocked (tested).
 - Cannot be embedded in other websites (anti-clickjacking), `nosniff`, strict referrer and permissions policies.
-- Rate limiting (Netlify, available on all plans): `/services` max 60 and `/contact` max 30 requests per minute per IP address.
+- Rate limiting (Netlify, available on all plans): `/contact` max 30 requests per minute and the form sender max 5 submissions per minute per IP address.
 - Common hacking paths (`/wp-admin`, `/.env`, `/.git`, `/admin`, `/phpmyadmin` …) return 404.
 
 **About passwords:** this website has **no logins and stores no passwords**, so there is nothing to hash or brute-force — that is the most secure setup. If a client portal or login is ever added, use a managed service (for example Netlify Identity's replacement or Auth0/Clerk) which provides bcrypt/Argon2 password hashing, login rate limiting and 2-factor login out of the box — never store passwords in the website files.

@@ -6,7 +6,7 @@
 //   MAIL_TO     where enquiries go, e.g. info@finlume.co.za   (default: SMTP_USER)
 //   SMTP_HOST   optional, default mail.<domain of SMTP_USER>   (cPanel hosting standard)
 //   SMTP_PORT   optional, default 465 (SSL)
-//   SITE_NAME   optional, shown in the email subject, e.g. Finlume
+//   FORM_SITE_NAME   optional, shown in the email subject, e.g. Finlume
 // The form only accepts messages sent from the website itself (same domain) or ALLOWED_ORIGINS.
 import tls from "node:tls";
 import crypto from "node:crypto";
@@ -60,7 +60,7 @@ export default async (req) => {
   const user = env("SMTP_USER"), pass = env("SMTP_PASS");
   if (!user || !pass) { console.error("contact: SMTP_USER/SMTP_PASS not set"); return json(503, { ok: false, error: "not configured" }); }
 
-  const siteName = env("SITE_NAME", new URL(req.url).hostname.replace(/^www\./, ""));
+  const siteName = env("FORM_SITE_NAME", new URL(req.url).hostname.replace(/^www\./, ""));
   const text = [
     "New enquiry from the " + siteName + " website", "",
     "Name:     " + f.name, "Email:    " + f.email, "Phone:    " + (f.phone || "-"),

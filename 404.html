@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-WuZEWOUoqUsFR585PknTD6oEyxjricPDtT21Z8FgBRU='; style-src 'sha256-8/pRp00EC4jQr4gxngeOHiMm5GhDpgv9x+8Ja47tRIA='; img-src 'self' data:; font-src data:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-ngxWQYrTSB0H4fUpIVUSz9DpAAnzep6m2MYfGzQbUtI='; style-src 'sha256-QcJKCFehPi2OaI+UCJU4UsEhMO0qANEwOpF9MTCuDmI='; img-src 'self' data:; font-src data:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <title>Page not found | Finlume Business Solutions</title>
 <meta name="description" content="This page could not be found.">
 <meta name="robots" content="noindex"><link rel="canonical" href="https://www.finlume.co.za/404">
@@ -273,7 +273,7 @@ a.cc:hover{border-color:var(--royal)}
 .field label.consent{display:flex;gap:12px;align-items:flex-start;font:400 .92rem/1.5 var(--f-body);letter-spacing:0;text-transform:none;color:var(--slate)}
 .consent input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--royal)}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
-.form-msg{border-radius:12px;padding:14px 16px;font-size:.95rem;margin-top:16px}
+.form-msg{border-radius:12px;padding:14px 16px;font-size:.95rem;margin-top:16px}.form-msg p{margin:0 0 12px}.form-msg .btn-row{gap:10px}
 .form-msg.ok{background:#E3F5EC;color:#0E5C3A}.form-msg.bad{background:#FDECEA;color:#8A1C12}
 /* prose */
 .prose{max-width:760px;margin:0 auto}
@@ -409,7 +409,7 @@ var f=d.getElementById('contact-form');
 if(f){
   var msg=d.getElementById('form-msg');
   var t0=Date.now();
-  var req=f.querySelectorAll('input:not([type=hidden]):not([name=_honey]),select,textarea');
+  var req=f.querySelectorAll('input:not([type=hidden]):not([name=bot-field]),select,textarea');
   var check=function(el){if(el.type!=='checkbox'&&el.tagName!=='SELECT')el.value=el.value.replace(/^\s+|\s+$/g,'');el.setCustomValidity('');if(el.minLength>0&&el.value&&el.value.length<el.minLength)el.setCustomValidity('short');var ok=el.checkValidity();el.setAttribute('aria-invalid',ok?'false':'true');var e=d.getElementById(el.id+'-err');
     if(e)e.textContent=ok?'':(el.type==='checkbox'?'Please tick this box so we can reply to you.':el.validity.valueMissing?'This field is required.':el.type==='email'?'Please enter a valid email address.':el.type==='tel'?'Please enter a valid phone number.':(el.validity.tooShort||el.validity.customError)?(el.name==='name'?'Please enter your full name.':'Please add a little more detail.'):'Please check this field.');return ok;};
   for(var r=0;r<req.length;r++){(function(el){el.addEventListener(el.type==='checkbox'?'change':'blur',function(){check(el);});})(req[r]);}
@@ -423,11 +423,25 @@ if(f){
     ev.preventDefault();
     var btn=f.querySelector('[type=submit]');btn.disabled=true;
     var data={};new FormData(f).forEach(function(v,k){data[k]=v;});
-    if(data._honey){window.location.href='/thank-you';return;}
-    fetch(f.getAttribute('action').replace('formsubmit.co/','formsubmit.co/ajax/'),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
-      .then(function(res){return res.json().then(function(j){if(!res.ok||String(j.success)!=='true')throw new Error(j.message||res.status);});})
+    fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+      .then(function(res){return res.json().then(function(j){if(!res.ok||!j.ok)throw new Error(res.status);});})
       .then(function(){try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
-      .catch(function(){btn.disabled=false;msg.hidden=false;msg.className='form-msg bad';msg.textContent='Sorry, your message could not be sent. Please try again, or contact us on WhatsApp or by email.';});
+      .catch(function(){
+        /* Fallback: if the form service is unavailable, send the same message by email or WhatsApp instead */
+        btn.disabled=false;
+        if(f.elements['bot-field']&&f.elements['bot-field'].value)return;
+        var v=function(n){var e=f.elements[n];return e&&e.value?e.value:'';};
+        var body='Name: '+v('name')+'\nEmail: '+v('email')+'\nPhone: '+v('phone')+'\nCompany: '+v('company')+'\nService: '+v('service')+'\n\n'+v('message');
+        var mail='mailto:'+f.getAttribute('data-to')+'?subject='+encodeURIComponent('Website enquiry from '+v('name'))+'&body='+encodeURIComponent(body);
+        var wa='https://wa.me/'+f.getAttribute('data-wa')+'?text='+encodeURIComponent('Hi Finlume, website enquiry:\n\n'+body);
+        msg.hidden=false;msg.className='form-msg ok';msg.textContent='';
+        var p1=d.createElement('p');p1.textContent='Almost done: choose how to send your message. It is already filled in for you.';msg.appendChild(p1);
+        var row=d.createElement('div');row.className='btn-row';
+        var a1=d.createElement('a');a1.className='btn btn-navy';a1.href=mail;a1.textContent='Send by email';
+        var a2=d.createElement('a');a2.className='btn btn-wa';a2.href=wa;a2.target='_blank';a2.rel='noopener noreferrer';a2.textContent='Send on WhatsApp';
+        row.appendChild(a1);row.appendChild(a2);msg.appendChild(row);
+        try{localStorage.removeItem('finlume-last-submit');}catch(x){}
+      });
   });
 }
 })();</script>
