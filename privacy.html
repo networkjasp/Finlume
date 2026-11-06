@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-VljhWDNBT1NmJdqTbgBFHFA2m4XQhg4aVbUZH4WQ3pw='; style-src 'sha256-8/pRp00EC4jQr4gxngeOHiMm5GhDpgv9x+8Ja47tRIA='; img-src 'self' data:; font-src data:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-WuZEWOUoqUsFR585PknTD6oEyxjricPDtT21Z8FgBRU='; style-src 'sha256-8/pRp00EC4jQr4gxngeOHiMm5GhDpgv9x+8Ja47tRIA='; img-src 'self' data:; font-src data:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <title>Privacy Notice | Finlume Business Solutions</title>
 <meta name="description" content="How Finlume collects, uses and protects personal information under POPIA.">
 <link rel="canonical" href="https://www.finlume.co.za/privacy">
@@ -371,7 +371,7 @@ a.cc:hover{border-color:var(--royal)}
 <h2>2. Information Officer</h2><p>Our Information Officer is Rochelle Brandon, Founder &amp; Director. Contact: info@finlume.co.za or +27 71 608 3460.</p>
 <h2>3. Information we collect</h2><ul><li>Contact details you give us, such as your name, email address, phone number and company name.</li><li>Information needed to deliver our services, such as identity and registration numbers, tax reference numbers, banking, financial records and payroll information.</li><li>Basic technical information that our website host records automatically for security and performance.</li></ul><p>This website does not use advertising or tracking cookies.</p>
 <h2>4. How we use it</h2><ul><li>To respond to enquiries and prepare proposals.</li><li>To provide bookkeeping, payroll, tax, financial statement, advisory and secretarial services.</li><li>To submit returns and filings to authorities such as SARS and the CIPC on your instruction.</li><li>To meet our legal, regulatory and professional obligations.</li></ul><p>We only send marketing messages if you have agreed to receive them, and you can opt out at any time.</p>
-<h2>5. Sharing</h2><p>We never sell personal information. We share it only where necessary: with authorities such as SARS and the CIPC when submitting on your behalf, with trusted professional partners such as independent reviewers when you ask us to, and with service providers that help us operate (for example cloud accounting software, email and website hosting). They must keep your information confidential and secure.</p>
+<h2>5. Sharing</h2><p>We never sell personal information. We share it only where necessary: with authorities such as SARS and the CIPC when submitting on your behalf, with trusted professional partners such as independent reviewers when you ask us to, and with service providers that help us operate (for example cloud accounting software, email, website hosting, and FormSubmit, which delivers contact-form messages to our mailbox). They must keep your information confidential and secure.</p>
 <h2>6. Cross-border storage</h2><p>Some cloud services we use may store information on servers outside South Africa. When this happens we take reasonable steps to ensure it is protected to a standard comparable to POPIA.</p>
 <h2>7. Security and retention</h2><p>We use appropriate technical and organisational measures, including access controls, encrypted connections and strict confidentiality. We keep information only as long as needed for its purpose or as required by law (for example, the Tax Administration Act and the Companies Act), then securely delete or destroy it.</p>
 <h2>8. Your rights</h2><ul><li>Ask whether we hold your personal information and request a copy.</li><li>Ask us to correct or delete information that is inaccurate, out of date or unlawfully held.</li><li>Object to processing and withdraw consent where processing is based on consent.</li><li>Lodge a complaint with the Information Regulator (South Africa) at www.inforegulator.org.za.</li></ul>
@@ -420,7 +420,7 @@ var f=d.getElementById('contact-form');
 if(f){
   var msg=d.getElementById('form-msg');
   var t0=Date.now();
-  var req=f.querySelectorAll('input:not([type=hidden]):not([name=bot-field]),select,textarea');
+  var req=f.querySelectorAll('input:not([type=hidden]):not([name=_honey]),select,textarea');
   var check=function(el){if(el.type!=='checkbox'&&el.tagName!=='SELECT')el.value=el.value.replace(/^\s+|\s+$/g,'');el.setCustomValidity('');if(el.minLength>0&&el.value&&el.value.length<el.minLength)el.setCustomValidity('short');var ok=el.checkValidity();el.setAttribute('aria-invalid',ok?'false':'true');var e=d.getElementById(el.id+'-err');
     if(e)e.textContent=ok?'':(el.type==='checkbox'?'Please tick this box so we can reply to you.':el.validity.valueMissing?'This field is required.':el.type==='email'?'Please enter a valid email address.':el.type==='tel'?'Please enter a valid phone number.':(el.validity.tooShort||el.validity.customError)?(el.name==='name'?'Please enter your full name.':'Please add a little more detail.'):'Please check this field.');return ok;};
   for(var r=0;r<req.length;r++){(function(el){el.addEventListener(el.type==='checkbox'?'change':'blur',function(){check(el);});})(req[r]);}
@@ -433,8 +433,11 @@ if(f){
     if(!window.fetch||!window.FormData||!window.URLSearchParams)return;
     ev.preventDefault();
     var btn=f.querySelector('[type=submit]');btn.disabled=true;
-    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()})
-      .then(function(res){if(!res.ok)throw new Error(res.status);try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
+    var data={};new FormData(f).forEach(function(v,k){data[k]=v;});
+    if(data._honey){window.location.href='/thank-you';return;}
+    fetch(f.getAttribute('action').replace('formsubmit.co/','formsubmit.co/ajax/'),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+      .then(function(res){return res.json().then(function(j){if(!res.ok||String(j.success)!=='true')throw new Error(j.message||res.status);});})
+      .then(function(){try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
       .catch(function(){btn.disabled=false;msg.hidden=false;msg.className='form-msg bad';msg.textContent='Sorry, your message could not be sent. Please try again, or contact us on WhatsApp or by email.';});
   });
 }

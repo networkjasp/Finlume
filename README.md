@@ -29,7 +29,7 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 2. **Add file → Upload files** → select **all the files** in this folder → **Commit changes**.
 3. Netlify publishes automatically (Build command: empty, Publish directory: `.`).
 4. In Netlify: **Domain management → HTTPS** — make sure the certificate is active. Netlify then automatically redirects every `http://` visit to `https://` (forced HTTPS), and the site also sends a 2-year HSTS header so browsers always use HTTPS.
-5. In Netlify: **Forms → Form notifications → Email** → rochelle@finlume.co.za.
+5. Contact form: messages are emailed to rochelle@finlume.co.za by **FormSubmit** (built into the page code, no Netlify setting needed). The very first message triggers a one-time **activation email** from FormSubmit to rochelle@ — click **Activate Form** in it. FormSubmit then also sends a random alias; you can put it in `content.py` (`FORM_TO`) and rebuild to hide the email address from the page code.
 
 ## What's built in
 
@@ -41,7 +41,7 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 
 **Cookie notice:** the site uses no advertising or tracking cookies. The notice explains this and remembers the visitor's choice on their device.
 
-**Contact form:** checks every field (required fields, real email format, phone format, minimum lengths, POPIA consent) before sending. Spam protection: a hidden honeypot field, a block on instant "bot-speed" submissions, a 60-second pause between submissions, Netlify's built-in spam filter, and a Netlify rate limit on the contact page.
+**Contact form:** checks every field (required fields, real email format, phone format, minimum lengths, POPIA consent) before sending. Spam protection: a hidden honeypot field (FormSubmit `_honey`), a block on instant "bot-speed" submissions, a 60-second pause between submissions, and a Netlify rate limit on the contact page.
 
 **Security:**
 - No secrets, passwords or API keys in the website code (checked).

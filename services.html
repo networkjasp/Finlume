@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-VljhWDNBT1NmJdqTbgBFHFA2m4XQhg4aVbUZH4WQ3pw='; style-src 'sha256-8/pRp00EC4jQr4gxngeOHiMm5GhDpgv9x+8Ja47tRIA='; img-src 'self' data:; font-src data:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-WuZEWOUoqUsFR585PknTD6oEyxjricPDtT21Z8FgBRU='; style-src 'sha256-8/pRp00EC4jQr4gxngeOHiMm5GhDpgv9x+8Ja47tRIA='; img-src 'self' data:; font-src data:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <title>Services | Finlume Business Solutions</title>
 <meta name="description" content="Bookkeeping, payroll, tax and SARS compliance, annual financial statements, management accounts, business advisory and CIPC services.">
 <link rel="canonical" href="https://www.finlume.co.za/services">
@@ -412,7 +412,7 @@ var f=d.getElementById('contact-form');
 if(f){
   var msg=d.getElementById('form-msg');
   var t0=Date.now();
-  var req=f.querySelectorAll('input:not([type=hidden]):not([name=bot-field]),select,textarea');
+  var req=f.querySelectorAll('input:not([type=hidden]):not([name=_honey]),select,textarea');
   var check=function(el){if(el.type!=='checkbox'&&el.tagName!=='SELECT')el.value=el.value.replace(/^\s+|\s+$/g,'');el.setCustomValidity('');if(el.minLength>0&&el.value&&el.value.length<el.minLength)el.setCustomValidity('short');var ok=el.checkValidity();el.setAttribute('aria-invalid',ok?'false':'true');var e=d.getElementById(el.id+'-err');
     if(e)e.textContent=ok?'':(el.type==='checkbox'?'Please tick this box so we can reply to you.':el.validity.valueMissing?'This field is required.':el.type==='email'?'Please enter a valid email address.':el.type==='tel'?'Please enter a valid phone number.':(el.validity.tooShort||el.validity.customError)?(el.name==='name'?'Please enter your full name.':'Please add a little more detail.'):'Please check this field.');return ok;};
   for(var r=0;r<req.length;r++){(function(el){el.addEventListener(el.type==='checkbox'?'change':'blur',function(){check(el);});})(req[r]);}
@@ -425,8 +425,11 @@ if(f){
     if(!window.fetch||!window.FormData||!window.URLSearchParams)return;
     ev.preventDefault();
     var btn=f.querySelector('[type=submit]');btn.disabled=true;
-    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()})
-      .then(function(res){if(!res.ok)throw new Error(res.status);try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
+    var data={};new FormData(f).forEach(function(v,k){data[k]=v;});
+    if(data._honey){window.location.href='/thank-you';return;}
+    fetch(f.getAttribute('action').replace('formsubmit.co/','formsubmit.co/ajax/'),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+      .then(function(res){return res.json().then(function(j){if(!res.ok||String(j.success)!=='true')throw new Error(j.message||res.status);});})
+      .then(function(){try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
       .catch(function(){btn.disabled=false;msg.hidden=false;msg.className='form-msg bad';msg.textContent='Sorry, your message could not be sent. Please try again, or contact us on WhatsApp or by email.';});
   });
 }
