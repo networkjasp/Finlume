@@ -1,0 +1,55 @@
+<!--
+  Contact form: paste into your contact page. It sends to /api/contact on the SAME website
+  (the netlify/functions/contact.mjs file), which emails it to your inbox.
+  Change only: data-email and data-wa (used if sending ever fails).
+  If the site has a Content-Security-Policy, nothing extra is needed: everything stays on your own domain.
+-->
+<form class="cf-form" method="POST" action="/api/contact" novalidate
+      data-email="info@yourdomain.co.za" data-wa="27XXXXXXXXX">
+  <p class="cf-hp" aria-hidden="true"><label for="cf-bot">Leave empty</label><input id="cf-bot" name="bot-field" tabindex="-1" autocomplete="off"></p>
+  <div class="cf-field"><label for="cf-name">Full name *</label><input id="cf-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
+  <div class="cf-field"><label for="cf-email">Email address *</label><input id="cf-email" name="email" type="email" autocomplete="email" maxlength="150" required></div>
+  <div class="cf-field"><label for="cf-phone">Phone number</label><input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="25"></div>
+  <div class="cf-field"><label for="cf-message">Message *</label><textarea id="cf-message" name="message" rows="5" minlength="10" maxlength="3000" required></textarea></div>
+  <label class="cf-consent"><input type="checkbox" name="consent" value="Yes" required> <span>I agree that my details may be used to respond to my enquiry (POPIA). *</span></label>
+  <button type="submit" class="cf-btn">Send message</button>
+  <div class="cf-msg" role="status" hidden></div>
+</form>
+<style>
+  .cf-form{display:grid;gap:14px;max-width:560px}
+  .cf-field{display:flex;flex-direction:column;gap:6px}.cf-field label{font-weight:600;font-size:.9rem}
+  .cf-field input,.cf-field textarea{font:inherit;padding:12px;border:1.5px solid #cfd6e1;border-radius:10px}
+  .cf-consent{display:flex;gap:10px;align-items:flex-start;font-size:.92rem}
+  .cf-hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+  .cf-btn{justify-self:start;padding:13px 26px;border:0;border-radius:999px;background:#1E4FB8;color:#fff;font-weight:700;cursor:pointer}
+  .cf-msg{padding:12px 14px;border-radius:10px}.cf-msg.ok{background:#E3F5EC;color:#0E5C3A}.cf-msg.bad{background:#FDECEA;color:#8A1C12}
+  .cf-msg a{display:inline-block;margin:8px 8px 0 0;padding:9px 16px;border-radius:999px;background:#1E4FB8;color:#fff;text-decoration:none;font-weight:700}
+  .cf-msg a.wa{background:#25D366;color:#073B1E}
+</style>
+<script>
+(function () {
+  document.querySelectorAll("form.cf-form").forEach(function (f) {
+    var msg = f.querySelector(".cf-msg"), btn = f.querySelector("[type=submit]"), t0 = Date.now();
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!f.checkValidity()) { f.reportValidity(); return; }
+      if (Date.now() - t0 < 3000) return;                       // too fast = bot
+      var d = {}; new FormData(f).forEach(function (v, k) { d[k] = v; });
+      btn.disabled = true; msg.hidden = false; msg.className = "cf-msg ok"; msg.textContent = "Sending…";
+      fetch(f.getAttribute("action"), { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(d) })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw j; }); })
+        .then(function () { f.reset(); msg.textContent = "Thank you, your message has been sent. We'll be in touch soon."; })
+        .catch(function (j) {
+          msg.className = "cf-msg bad";
+          if (j && j.error === "invalid") { msg.textContent = "Please check the form: name, a valid email, a message and the consent box are required."; return; }
+          var body = "Name: " + (d.name||"") + "\nEmail: " + (d.email||"") + "\nPhone: " + (d.phone||"") + "\n\n" + (d.message||"");
+          msg.textContent = "We couldn't send it automatically. Tap to send it yourself (already filled in):";
+          var a = document.createElement("a"); a.href = "mailto:" + f.dataset.email + "?subject=" + encodeURIComponent("Website enquiry from " + (d.name||"")) + "&body=" + encodeURIComponent(body); a.textContent = "Send by email";
+          var w = document.createElement("a"); w.className = "wa"; w.target = "_blank"; w.rel = "noopener"; w.href = "https://wa.me/" + f.dataset.wa + "?text=" + encodeURIComponent(body); w.textContent = "Send on WhatsApp";
+          msg.appendChild(document.createElement("br")); msg.appendChild(a); msg.appendChild(w);
+        })
+        .then(function () { btn.disabled = false; });
+    });
+  });
+})();
+</script>
