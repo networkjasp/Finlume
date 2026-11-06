@@ -19,8 +19,9 @@ All the text on the site lives in the `content` folder. The Website editor chang
 | `content/` | All editable text: `home.json`, `services.json`, `about.json`, `contact.json`, `settings.json` (phone, email, address) |
 | `uploads/` | Pictures uploaded in the Website editor (for example Rochelle's photo) |
 | `build.py`, `content.py` | Turn the text into finished pages. Netlify runs these automatically |
-| `studio/` | The Website editor program (Decap CMS 3.17.1, stored here so no outside script is loaded) |
+| `studio/` | The Website editor: login page and editor program (Decap CMS 3.17.1, stored here so no outside script is loaded) |
 | `netlify/functions/contact.mjs` | Sends contact-form messages to info@finlume.co.za |
+| `netlify/functions/cms-login.mjs`, `cms-github.mjs`, `netlify/lib/cms-auth.mjs` | The editor login and the safe relay to GitHub |
 | `netlify.toml` | Netlify settings: build command, short addresses, security headers, rate limits |
 | `fonts/`, images, `Finlume-Company-Profile.pdf` | Used to build the pages |
 
@@ -33,26 +34,36 @@ Do **not** upload any `.env` file. The mailbox password lives only in Netlify.
 3. Check the repo now shows `build.py`, `netlify.toml` and `content/home.json` at the top level.
 4. Netlify builds the site by itself (the build settings are in `netlify.toml`). In Netlify → **Deploys**, the latest deploy should say **Published**.
 
-## 2. Turn on the Website editor sign-in (once, about 5 minutes)
+## 2. Set up the editor login (once, about 10 minutes)
 
-The editor signs in with GitHub. Only GitHub accounts that can change this repository can edit the site.
+The editor has its own login page (username and password). Behind the scenes it saves your changes to GitHub with a private key that only Netlify knows.
 
-**A. Create a GitHub "OAuth App"**
-1. Go to **github.com/settings/developers** → **OAuth Apps** → **New OAuth App**.
-2. Fill in:
-   - Application name: `Finlume website editor`
-   - Homepage URL: `https://www.finlume.co.za`
-   - Authorization callback URL: `https://api.netlify.com/auth/done`
-3. Click **Register application**. Copy the **Client ID**. Click **Generate a new client secret** and copy it (it's shown only once).
+**A. Create a GitHub key limited to this website**
+1. On GitHub, signed in as the owner of this repository, go to **github.com/settings/personal-access-tokens/new** (Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → **Generate new token**).
+2. Token name: `Finlume website editor`. Expiration: the longest offered (put a reminder in your calendar to renew it).
+3. **Repository access → Only select repositories** → choose this website's repository.
+4. **Permissions → Repository permissions → Contents → Read and write**. (Metadata: Read-only is added automatically.) Leave everything else as "No access".
+5. Click **Generate token** and copy it (it starts with `github_pat_` and is shown only once).
 
-**B. Give the keys to Netlify**
-1. Netlify → your site → **Project configuration → Security → OAuth** (older screens: **Site configuration → Access & security → OAuth**).
-2. Under **Authentication providers** click **Install provider** → **GitHub** → paste the Client ID and Client secret → **Install**.
+**B. Add the login settings to Netlify**
+Netlify → **Site configuration → Environment variables → Add a variable** (or **Import from a .env file** and paste the contents of `finlume.env`):
+
+| Key | Value | Secret? |
+|---|---|---|
+| `CMS_USERNAME` | `Admin` | No |
+| `CMS_PASSWORD_HASH` | the long `scrypt:…` line from `finlume.env` (a scrambled form of the password, the password itself is never stored) | Yes |
+| `GITHUB_TOKEN` | the `github_pat_…` key from step A | Yes |
+
+Then **Deploys → Trigger deploy → Deploy site**.
 
 **C. Try it**
-1. Open www.finlume.co.za, scroll to the footer and click the **©** symbol **5 times quickly**.
-2. Click **Login with GitHub** → **Authorize**.
+1. On www.finlume.co.za click the **©** in the footer **5 times quickly** (or go to www.finlume.co.za/studio/).
+2. Sign in with the username and password.
 3. Open **Website → About page**, change something, click **Publish → Publish now**. Refresh the live site after a minute or two.
+
+You stay signed in for 8 hours on that device. Use the menu at the top right of the editor to log out.
+
+**Changing the password later:** ask your developer for a new `CMS_PASSWORD_HASH` value, replace it in Netlify and redeploy. Everyone is signed out automatically.
 
 ## Using the editor
 
@@ -72,18 +83,20 @@ Netlify → **Site configuration → Environment variables** must have:
 
 ## Security
 
-- The © trick only hides the door. The real lock is the GitHub sign-in: only accounts with write access to this repository can change anything. Turn on **two-factor login** on GitHub, Netlify, HostAfrica and the info@ mailbox.
-- To let Rochelle edit with her own GitHub account: repository → **Settings → Collaborators → Add people**. (If the repository is private and Netlify then shows "Unrecognized Git contributor", either keep the repository public, which is safe because no passwords are stored in it, or edit with the GitHub account that is connected to Netlify.)
-- The editor page is hidden from search engines and has its own strict security policy: it can only talk to this site, GitHub and Netlify's sign-in.
+- The © trick only hides the door. The lock is the login: the password is checked on Netlify's server (never in the page), stored only as an scrypt hash, and limited to 5 attempts a minute per IP address with a delay after each wrong try. Use a long password and turn on **two-factor login** on GitHub, Netlify, HostAfrica and the info@ mailbox.
+- The GitHub key never reaches the browser. The editor gets a signed 8-hour pass, and Netlify only passes on the GitHub requests the editor needs (reading and saving files in this one repository). Changes are saved as the GitHub account that created the key, so Netlify always recognises them.
+- The editor page is hidden from search engines and has its own strict security policy: it can only talk to this website.
 - Every public page keeps its strict fingerprint-based Content-Security-Policy, anti-clickjacking, HTTPS-only, rate limits and blocked hacking paths.
 
 ## Troubleshooting
 
 | What you see | Fix |
 |---|---|
-| Editor says "Not Found" or "Failed to load config" after login | The OAuth provider isn't installed (step 2B), or the GitHub account has no write access to the repo |
-| Login popup closes and nothing happens | Check the callback URL in the GitHub OAuth App is exactly `https://api.netlify.com/auth/done` |
+| "The editor isn't set up yet" | Add the three `CMS_…`/`GITHUB_TOKEN` variables in Netlify, then redeploy |
+| "Incorrect username or password" | Check spelling. The password is case-sensitive |
+| "Too many attempts" | Wait one minute |
+| Signed in, but the editor shows an error about the repo or "Bad credentials" | The GitHub key expired, or it doesn't include this repository with Contents: Read and write. Make a new key (step 2A), update `GITHUB_TOKEN`, redeploy |
 | Published, but the live site didn't change | Netlify → Deploys: wait for the build to finish, or open the failed deploy log |
-| Deploy log says `python3: command not found` | Netlify → Site configuration → Environment variables → add `PYTHON_VERSION` = `3.12`, then redeploy |
+| Deploy log says `python3: command not found` | Netlify → Environment variables → add `PYTHON_VERSION` = `3.12`, then redeploy |
 
 **Free plan limit:** every **Publish** in the editor starts one new Netlify deploy. Netlify's free plan gives 300 credits a month and each live deploy uses about 15, so roughly **20 publishes a month** (check Netlify → Billing → Usage). Make all your changes to a page, then publish once.

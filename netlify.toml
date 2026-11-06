@@ -9,7 +9,7 @@
 # appears on the website (business name, email addresses), so Netlify's secret scanner must
 # not treat them as leaked secrets.
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "FORM_SITE_NAME,SMTP_USER,MAIL_TO,SMTP_HOST,SMTP_PORT"
+  SECRETS_SCAN_OMIT_KEYS = "FORM_SITE_NAME,SMTP_USER,MAIL_TO,SMTP_HOST,SMTP_PORT,CMS_USERNAME"
 
 # Friendly addresses
 [[redirects]]
@@ -46,12 +46,7 @@
   to = "/security.txt"
   status = 200
 
-# Website editor: /studio/ (opened by clicking the © symbol 5 times). Short address too.
-[[redirects]]
-  from = "/studio"
-  to = "/studio/"
-  status = 301
-  force = true
+# Website editor: /studio/ (opened by clicking the © symbol 5 times). Netlify serves studio/index.html there.
 
 # Block common hacking probes (this site has no PHP or database; the editor lives at /studio/)
 [[redirects]]
@@ -115,16 +110,16 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains"
-    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    Cross-Origin-Opener-Policy = "same-origin"
     X-Permitted-Cross-Domain-Policies = "none"
 
-# Website editor: never indexed, never cached, and only talks to this site, GitHub and Netlify sign-in.
+# Website editor: never indexed, never cached, and only talks to this site (GitHub is reached through /api/gh).
 [[headers]]
   for = "/studio/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-cache"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.githubusercontent.com https://avatars.githubusercontent.com; font-src 'self' data:; connect-src 'self' https://api.github.com https://api.netlify.com https://*.githubusercontent.com; media-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://avatars.githubusercontent.com; font-src 'self' data:; connect-src 'self'; media-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 # Caching for images and documents (pages themselves are always re-checked)
 [[headers]]
