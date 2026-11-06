@@ -33,7 +33,7 @@ Every page is **one complete file**: styles, scripts, fonts and logo are built i
 5. Contact form, one-time setup (works on the free Netlify plan, no "Forms" feature needed):
    - The form is sent by a small Netlify Function (`netlify/functions/contact.mjs`) which emails each enquiry to **info@finlume.co.za** through the Finlume mailbox at HostAfrica.
    - In Netlify: **Site configuration → Environment variables → Add a variable**, and add:
-     - `SMTP_USER` = `rochelle@finlume.co.za`
+     - `SMTP_USER` = `info@finlume.co.za` (must be a real mailbox, not a forwarder)
      - `SMTP_PASS` = the password of that mailbox (mark it **Contains secret values**)
      - `MAIL_TO` = `info@finlume.co.za`
      - `FORM_SITE_NAME` = `Finlume`

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-ngxWQYrTSB0H4fUpIVUSz9DpAAnzep6m2MYfGzQbUtI='; style-src 'sha256-QcJKCFehPi2OaI+UCJU4UsEhMO0qANEwOpF9MTCuDmI='; img-src 'self' data:; font-src data:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-8l4i73/xbpFNDFFRF3M8E7ngKLBV7YW7ukurbpJD1Sg='; style-src 'sha256-8s0gR4buGS8cEoJMWlzW/tWQ5fRgNuOY89oztn1lFxw='; img-src 'self' data:; font-src data:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <title>About Us | Finlume Business Solutions</title>
 <meta name="description" content="Meet Finlume, a founder-led South African outsourced accounting firm led by qualified accountant Rochelle Brandon.">
 <link rel="canonical" href="https://www.finlume.co.za/about">
@@ -270,6 +270,8 @@ a.cc:hover{border-color:var(--royal)}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--royal);background:#fff;box-shadow:0 0 0 4px rgba(30,79,184,.12)}
 .field [aria-invalid="true"]{border-color:#C0392B}
 .err{font-size:.8rem;color:#B42318;min-height:1em}
+.hint{font-size:.82rem;color:var(--slate)}
+.btn[disabled]{opacity:.75;cursor:wait;transform:none}
 .field label.consent{display:flex;gap:12px;align-items:flex-start;font:400 .92rem/1.5 var(--f-body);letter-spacing:0;text-transform:none;color:var(--slate)}
 .consent input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--royal)}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
@@ -442,6 +444,10 @@ var f=d.getElementById('contact-form');
 if(f){
   var msg=d.getElementById('form-msg');
   var t0=Date.now();
+  var ta=d.getElementById('f-message'),sel=d.getElementById('f-service'),touched=false;
+  var defMsg=function(svc){return svc?"Hi Finlume, I'm interested in "+svc+". Please contact me to book a free consultation.":"Hi Finlume, I'd like to book a free consultation. Please contact me to discuss how you can help my business.";};
+  if(ta){ta.addEventListener('input',function(){touched=true;});}
+  if(sel&&ta){sel.addEventListener('change',function(){if(!touched)ta.value=defMsg(sel.value);});}
   var req=f.querySelectorAll('input:not([type=hidden]):not([name=bot-field]),select,textarea');
   var check=function(el){if(el.type!=='checkbox'&&el.tagName!=='SELECT')el.value=el.value.replace(/^\s+|\s+$/g,'');el.setCustomValidity('');if(el.minLength>0&&el.value&&el.value.length<el.minLength)el.setCustomValidity('short');var ok=el.checkValidity();el.setAttribute('aria-invalid',ok?'false':'true');var e=d.getElementById(el.id+'-err');
     if(e)e.textContent=ok?'':(el.type==='checkbox'?'Please tick this box so we can reply to you.':el.validity.valueMissing?'This field is required.':el.type==='email'?'Please enter a valid email address.':el.type==='tel'?'Please enter a valid phone number.':(el.validity.tooShort||el.validity.customError)?(el.name==='name'?'Please enter your full name.':'Please add a little more detail.'):'Please check this field.');return ok;};
@@ -450,18 +456,21 @@ if(f){
     var bad=[];for(var r=0;r<req.length;r++){if(!check(req[r]))bad.push(req[r]);}
     if(bad.length){ev.preventDefault();bad[0].focus();return;}
     var last=0;try{last=+localStorage.getItem('finlume-last-submit')||0;}catch(x){}
-    if(Date.now()-t0<3000||Date.now()-last<60000){ev.preventDefault();msg.hidden=false;msg.className='form-msg bad';msg.textContent='Please wait a moment before sending again.';return;}
+    if(Date.now()-last<60000){ev.preventDefault();msg.hidden=false;msg.className='form-msg bad';msg.textContent='Your previous message was sent a moment ago. Please wait a minute before sending another.';return;}
+    if(ta&&!ta.value.replace(/\s/g,''))ta.value=defMsg(sel?sel.value:'');
     if(show){ev.preventDefault();msg.hidden=false;msg.className='form-msg ok';msg.textContent='Preview only: on the live website this message is delivered to Finlume through Netlify Forms.';return;}
     if(!window.fetch||!window.FormData||!window.URLSearchParams)return;
     ev.preventDefault();
-    var btn=f.querySelector('[type=submit]');btn.disabled=true;
+    var btn=f.querySelector('[type=submit]');btn.disabled=true;var btnHtml=btn.innerHTML;btn.textContent='Sending…';
+    msg.hidden=false;msg.className='form-msg ok';msg.textContent='Sending your message, this takes a few seconds…';
     var data={};new FormData(f).forEach(function(v,k){data[k]=v;});
-    fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+    var wait=Math.max(0,3000-(Date.now()-t0)); /* bots submit instantly; people never notice this pause */
+    new Promise(function(ok){setTimeout(ok,wait);}).then(function(){return fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)});})
       .then(function(res){return res.json().then(function(j){if(!res.ok||!j.ok)throw new Error(res.status);});})
       .then(function(){try{localStorage.setItem('finlume-last-submit',String(Date.now()));}catch(x){}window.location.href='/thank-you';})
       .catch(function(){
         /* Fallback: if the form service is unavailable, send the same message by email or WhatsApp instead */
-        btn.disabled=false;
+        btn.disabled=false;btn.innerHTML=btnHtml;
         if(f.elements['bot-field']&&f.elements['bot-field'].value)return;
         var v=function(n){var e=f.elements[n];return e&&e.value?e.value:'';};
         var body='Name: '+v('name')+'\nEmail: '+v('email')+'\nPhone: '+v('phone')+'\nCompany: '+v('company')+'\nService: '+v('service')+'\n\n'+v('message');

@@ -35,7 +35,7 @@ const clean = (v, k) => {
   return s.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, MAX[k]);
 };
 
-export default async (req) => {
+export default async (req, context) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { Allow: "POST" } });
   const origin = req.headers.get("origin");
   if (origin && !originAllowed(origin, req.url)) return json(403, { ok: false, error: "forbidden" });
@@ -54,6 +54,8 @@ export default async (req) => {
 
   const f = {};
   for (const k of Object.keys(MAX)) f[k] = clean(data[k], k);
+  // Visitors may leave the message as it is: use a friendly default if it is empty
+  if (!f.message) f.message = "Hi, please contact me to book a free consultation." + (f.service ? " I'm interested in " + f.service + "." : "");
   const valid = f.name.length >= 2 && /^[^\s@<>"]+@[^\s@<>"]+\.[a-z]{2,}$/i.test(f.email) && f.message.length >= 10 && data.consent === "Yes";
   if (!valid) return json(422, { ok: false, error: "invalid" });
 
@@ -69,15 +71,24 @@ export default async (req) => {
     "", "Click Reply to answer " + f.name + " directly.",
   ].join("\n");
 
-  try {
-    await sendMail({
+  const sending = sendMail({
       host: env("SMTP_HOST", "mail." + user.split("@")[1]), port: Number(env("SMTP_PORT", "465")), user, pass,
       from: user, to: env("MAIL_TO", user), siteName,
       replyName: f.name.replace(/["<>\\]/g, ""), replyTo: f.email,
       subject: siteName + " website enquiry from " + f.name + (f.service ? " (" + f.service + ")" : ""), text,
-    });
-  } catch (e) {
-    console.error("contact: send failed:", e.message);
+    }).then(() => ({ ok: true }), (e) => ({ ok: false, error: e.message }));
+
+  // Wait up to 4 seconds for the mail server. Almost all failures (wrong password, server down)
+  // happen within that time and are reported to the visitor. If the server is simply slow,
+  // reply to the visitor straight away and let the email finish in the background.
+  const first = await Promise.race([sending, new Promise((r) => setTimeout(() => r(null), 4000))]);
+  if (first === null && context && typeof context.waitUntil === "function") {
+    context.waitUntil(sending.then((r) => { if (!r.ok) console.error("contact: send failed (background):", r.error); }));
+    return thanks();
+  }
+  const result = first || (await sending);
+  if (!result.ok) {
+    console.error("contact: send failed:", result.error);
     return json(502, { ok: false, error: "send failed" });
   }
   return thanks();
@@ -127,13 +138,21 @@ export function sendMail({ host, port, user, pass, from, to, siteName = "Website
     const body = b64(text).replace(/.{1,76}/g, "$&\r\n");
     (async () => {
       await cmd(null, [220]);
-      await cmd("EHLO " + domain, [250]);
-      await cmd("AUTH LOGIN", [334]);
-      await cmd(b64(user), [334]);
-      await cmd(b64(pass), [235]);
-      await cmd("MAIL FROM:<" + from + ">", [250]);
-      await cmd("RCPT TO:<" + to + ">", [250, 251]);
-      await cmd("DATA", [354]);
+      const ehlo = await cmd("EHLO " + domain, [250]);
+      // Fewer round trips = faster sending (each one crosses the ocean to the mail server)
+      if (/AUTH[^\n]*PLAIN/i.test(ehlo)) {
+        await cmd("AUTH PLAIN " + Buffer.from("\0" + user + "\0" + pass, "utf8").toString("base64"), [235]);
+      } else {
+        await cmd("AUTH LOGIN", [334]); await cmd(b64(user), [334]); await cmd(b64(pass), [235]);
+      }
+      if (/PIPELINING/i.test(ehlo)) {
+        sock.write("MAIL FROM:<" + from + ">\r\nRCPT TO:<" + to + ">\r\nDATA\r\n");
+        await cmd(null, [250]); await cmd(null, [250, 251]); await cmd(null, [354]);
+      } else {
+        await cmd("MAIL FROM:<" + from + ">", [250]);
+        await cmd("RCPT TO:<" + to + ">", [250, 251]);
+        await cmd("DATA", [354]);
+      }
       await cmd(headers.join("\r\n") + "\r\n\r\n" + body + ".", [250]);
       sock.removeAllListeners("close");
       try { sock.write("QUIT\r\n"); } catch {}
