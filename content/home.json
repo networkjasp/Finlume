@@ -1,0 +1,195 @@
+{
+  "hero_eyebrow": "Outsourced accounting · South Africa",
+  "hero_title": "Clarity in",
+  "hero_highlight": "every number.",
+  "hero_lead": "Finlume is the finance department that works from outside your business. Bookkeeping, payroll, tax and reporting are handled by a qualified accountant and explained in plain language.",
+  "intro_eyebrow": "Your finance department, from the outside",
+  "intro_title": "Everything a finance team does, without hiring one.",
+  "intro_text": "Running a business means making decisions every day, and every one of them depends on numbers you can trust. Finlume takes care of the bookkeeping, payroll, tax and reporting behind the scenes, so you always know where you stand and never worry about a missed deadline.\n\nWe are a new, founder-led firm. That means personal attention, qualified oversight on every file and a partner who explains things in plain language.",
+  "services_title": "Complete finance support, under one roof",
+  "services_lead": "Choose a single service or let us run your entire finance function. Every engagement is tailored to the size and stage of your business.",
+  "deadlines_title": "Your compliance calendar, kept by us",
+  "deadlines_lead": "These are the dates that catch growing businesses out. We track them, prepare the submissions and remind you well before anything is due.",
+  "deadlines": [
+    {
+      "when": "By the 7th",
+      "often": "Every month",
+      "form": "EMP201",
+      "what": "PAYE, UIF and SDL declaration and payment for your employees."
+    },
+    {
+      "when": "By the 25th",
+      "often": "Monthly or bi-monthly",
+      "form": "VAT201",
+      "what": "VAT return for registered vendors, eFiling deadline is the last business day of the month."
+    },
+    {
+      "when": "31 Aug · end Feb",
+      "often": "Twice a year",
+      "form": "IRP6",
+      "what": "Provisional tax payments for companies and provisional taxpayers."
+    },
+    {
+      "when": "Year-end + 12 months",
+      "often": "Once a year",
+      "form": "ITR14",
+      "what": "Company income tax return, supported by your annual financial statements."
+    },
+    {
+      "when": "Anniversary + 30 days",
+      "often": "Once a year",
+      "form": "CIPC",
+      "what": "Annual return that keeps your company in good standing (30 business days)."
+    }
+  ],
+  "why_title": "The confidence of a full finance team, at a fraction of the cost",
+  "why": [
+    {
+      "icon": "team",
+      "title": "A full finance function",
+      "text": "Bookkeeping, payroll, tax and reporting in one place, without the cost of salaries, software and training for an in-house team."
+    },
+    {
+      "icon": "shield",
+      "title": "Qualified oversight",
+      "text": "Every file is overseen by a qualified accountant, so your records are accurate, complete and compliant."
+    },
+    {
+      "icon": "calendar",
+      "title": "Deadlines never missed",
+      "text": "We track every SARS and CIPC deadline and submit on time, so penalties and interest stay off your books."
+    },
+    {
+      "icon": "chat",
+      "title": "Plain-language reporting",
+      "text": "Clear reports and explanations without jargon, so you understand your numbers and can act on them."
+    },
+    {
+      "icon": "growth",
+      "title": "Scales as you grow",
+      "text": "Start with what you need today and add services as the business grows, no recruitment cycles."
+    },
+    {
+      "icon": "user",
+      "title": "Personal service from the founder",
+      "text": "You work directly with the founder, not a call centre, someone who knows your business."
+    }
+  ],
+  "compare": [
+    {
+      "item": "Salaries & benefits",
+      "inhouse": "Ongoing cost",
+      "finlume": "None"
+    },
+    {
+      "item": "Accounting software & training",
+      "inhouse": "Your cost",
+      "finlume": "Included"
+    },
+    {
+      "item": "Qualified accountant review",
+      "inhouse": "Extra hire",
+      "finlume": "Included"
+    },
+    {
+      "item": "Leave & staff turnover",
+      "inhouse": "Your risk",
+      "finlume": "Covered"
+    },
+    {
+      "item": "SARS & CIPC deadline tracking",
+      "inhouse": "Depends on staff",
+      "finlume": "Built in"
+    },
+    {
+      "item": "Monthly cost",
+      "inhouse": "Variable",
+      "finlume": "Fixed fee"
+    }
+  ],
+  "steps_title": "A simple, structured way to get your finances in order",
+  "steps": [
+    {
+      "title": "Discover",
+      "text": "A free, no-obligation consultation to understand your business, your current setup and what you need."
+    },
+    {
+      "title": "Plan",
+      "text": "A tailored proposal with a clear scope of work and a fixed monthly fee, no surprises."
+    },
+    {
+      "title": "Onboard",
+      "text": "We set up or tidy your systems, collect your records and take over the admin smoothly."
+    },
+    {
+      "title": "Deliver",
+      "text": "Monthly processing and compliance, completed accurately and submitted on time."
+    },
+    {
+      "title": "Advise",
+      "text": "Regular reviews and practical insights to help you plan ahead and decide with confidence."
+    }
+  ],
+  "serve_title": "Built for growing South African businesses",
+  "serve_lead": "Whether you are registering your first company or managing an established team, we meet you where you are.",
+  "serve": [
+    {
+      "icon": "rocket",
+      "title": "Start-ups & new companies",
+      "text": "Registered, set up and compliant from the very start."
+    },
+    {
+      "icon": "building",
+      "title": "Small & medium businesses",
+      "text": "A dependable finance function that grows with you."
+    },
+    {
+      "icon": "user",
+      "title": "Sole proprietors & freelancers",
+      "text": "Simple bookkeeping and tax, so you can focus on your work."
+    },
+    {
+      "icon": "heart",
+      "title": "Non-profit organisations",
+      "text": "Accurate records and reporting your board and funders can rely on."
+    },
+    {
+      "icon": "briefcase",
+      "title": "Professional practices",
+      "text": "Dependable accounting for practices that value precision."
+    },
+    {
+      "icon": "pin",
+      "title": "Wherever you are",
+      "text": "In person by appointment, remote right across South Africa."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What does outsourced accounting mean?",
+      "answer": "Instead of employing an in-house bookkeeper or accountant, you work with Finlume as your external finance department. We take care of your bookkeeping, payroll, tax and reporting, and you get qualified oversight without the cost of a full-time team."
+    },
+    {
+      "question": "Do I need to be near you?",
+      "answer": "No. We serve clients across South Africa. Most work is done remotely using secure cloud accounting software, email and WhatsApp, and in-person meetings are available by appointment."
+    },
+    {
+      "question": "Which accounting software do you work with?",
+      "answer": "We work with leading cloud platforms such as Xero, Sage and QuickBooks. If you don't use accounting software yet, we'll recommend and set up the option that suits your business."
+    },
+    {
+      "question": "How are your fees set?",
+      "answer": "After a free consultation we send a tailored proposal with a clear scope of work. Ongoing services are billed as a fixed monthly fee and once-off projects are quoted upfront, so there are no surprises."
+    },
+    {
+      "question": "Can you take over from my current accountant?",
+      "answer": "Yes. We manage the handover: we collect your records, review where things stand and make sure nothing falls through the cracks during the change."
+    },
+    {
+      "question": "How do I get started?",
+      "answer": "Book a free consultation by phone, WhatsApp or the contact form. We'll discuss what you need, send a proposal and, once you're happy, start onboarding."
+    }
+  ],
+  "cta_title": "Ready for clarity in every number?",
+  "cta_text": "Book a free consultation and find out how Finlume can take the finance admin off your plate."
+}

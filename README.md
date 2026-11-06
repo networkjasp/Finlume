@@ -1,75 +1,89 @@
 # Finlume website
 
-Website for **Finlume Business Solutions (Pty) Ltd** — *Clarity in every number*.
+Website for **Finlume Business Solutions (Pty) Ltd**, *Clarity in every number*.
 
-Every page is **one complete file**: styles, scripts, fonts and logo are built into the HTML. There are **no folders**, so nothing can go missing when uploading.
+## How it works now
 
-## Files
+```
+content/*.json  ──►  build.py (Netlify runs it)  ──►  dist/  (the live website)
+      ▲
+      └── edited in the Website editor at /studio/  (click the © symbol in the footer 5 times quickly)
+```
 
-| File | What it is |
+All the text on the site lives in the `content` folder. The Website editor changes those files on GitHub, Netlify notices the change, rebuilds the pages and publishes them, usually within a minute or two.
+
+## Files in this repository
+
+| File or folder | What it is |
 |---|---|
-| `index.html` | Home |
-| `services.html` | Services |
-| `about.html` | About Us |
-| `contact.html` | Contact Us (form + WhatsApp) |
-| `privacy.html` | POPIA Privacy Notice (includes the cookie section) |
-| `terms.html` | Terms & Conditions |
-| `thank-you.html` | Shown after the contact form is sent |
-| `404.html` | Custom "page not found" |
-| `Finlume-Company-Profile.pdf` | Downloadable company profile (compressed to ~0.5 MB) |
-| `og-image.jpg` | Picture shown when the site is shared on WhatsApp, LinkedIn, Facebook |
-| `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` | Browser-tab and phone icons |
-| `profile-cover.jpg` | Company profile cover shown on the Home page |
-| `netlify.toml` | Netlify settings: security headers, short URLs, rate limits, blocked hacking paths |
-| `netlify/functions/contact.mjs` | Sends contact-form messages to info@ (the only folder in the site — upload it too) |
-| `sitemap.xml`, `robots.txt`, `security.txt` | For search engines and security researchers |
+| `content/` | All editable text: `home.json`, `services.json`, `about.json`, `contact.json`, `settings.json` (phone, email, address) |
+| `uploads/` | Pictures uploaded in the Website editor (for example Rochelle's photo) |
+| `build.py`, `content.py` | Turn the text into finished pages. Netlify runs these automatically |
+| `studio/` | The Website editor program (Decap CMS 3.17.1, stored here so no outside script is loaded) |
+| `netlify/functions/contact.mjs` | Sends contact-form messages to info@finlume.co.za |
+| `netlify.toml` | Netlify settings: build command, short addresses, security headers, rate limits |
+| `fonts/`, images, `Finlume-Company-Profile.pdf` | Used to build the pages |
 
-## Upload to GitHub → Netlify
+Do **not** upload any `.env` file. The mailbox password lives only in Netlify.
 
-1. In the GitHub repository, delete the old website files.
-2. **Add file → Upload files** → **drag** everything in this folder (all files **and the `netlify` folder**) onto the page → **Commit changes**. Afterwards the repo must show `netlify/functions/contact.mjs`.
-3. Netlify publishes automatically (Build command: empty, Publish directory: `.`).
-4. In Netlify: **Domain management → HTTPS** — make sure the certificate is active. Netlify then automatically redirects every `http://` visit to `https://` (forced HTTPS), and the site also sends a 2-year HSTS header so browsers always use HTTPS.
-5. Contact form, one-time setup (works on the free Netlify plan, no "Forms" feature needed):
-   - The form is sent by a small Netlify Function (`netlify/functions/contact.mjs`) which emails each enquiry to **info@finlume.co.za** through the Finlume mailbox at HostAfrica.
-   - In Netlify: **Site configuration → Environment variables → Add a variable**, and add:
-     - `SMTP_USER` = `info@finlume.co.za` (must be a real mailbox, not a forwarder)
-     - `SMTP_PASS` = the password of that mailbox (mark it **Contains secret values**)
-     - `MAIL_TO` = `info@finlume.co.za`
-     - `FORM_SITE_NAME` = `Finlume`
-   - Then **Deploys → Trigger deploy → Deploy site**.
-   - The password lives only in Netlify, never in the website files.
-   - If sending ever fails, the visitor gets two buttons (**Send by email** / **Send on WhatsApp**) with the message already filled in, so no enquiry is lost.
+## 1. Upload to GitHub (replaces the old files)
 
-## What's built in
+1. Open the repository on GitHub. Delete the old website files (the old `.html` files and the old `netlify` folder).
+2. **Add file → Upload files** → drag **everything** from this folder, including the folders `content`, `uploads`, `studio`, `fonts` and `netlify` → **Commit changes**.
+3. Check the repo now shows `build.py`, `netlify.toml` and `content/home.json` at the top level.
+4. Netlify builds the site by itself (the build settings are in `netlify.toml`). In Netlify → **Deploys**, the latest deploy should say **Published**.
 
-**Pages & SEO:** unique meta title and description on every page, social sharing image and tags (Open Graph + Twitter/X), favicon, sitemap with dates, robots.txt, canonical URLs, short addresses (`/about`, `/services`, `/contact`, `/privacy`, `/terms`, `/profile`).
+## 2. Turn on the Website editor sign-in (once, about 5 minutes)
 
-**Quality (tested):** Lighthouse scores of 97–98 for Performance and 100 for Accessibility, Best Practices and SEO; zero automated accessibility errors on every page (including colour contrast); mobile layout checked at phone width with no sideways scrolling; no broken links; every image has alt text; fonts trimmed to the characters used.
+The editor signs in with GitHub. Only GitHub accounts that can change this repository can edit the site.
 
-**One clear call to action:** every primary button says *Book a free consultation* and goes to the Contact page.
+**A. Create a GitHub "OAuth App"**
+1. Go to **github.com/settings/developers** → **OAuth Apps** → **New OAuth App**.
+2. Fill in:
+   - Application name: `Finlume website editor`
+   - Homepage URL: `https://www.finlume.co.za`
+   - Authorization callback URL: `https://api.netlify.com/auth/done`
+3. Click **Register application**. Copy the **Client ID**. Click **Generate a new client secret** and copy it (it's shown only once).
 
-**Cookie notice:** the site uses no advertising or tracking cookies. The notice explains this and remembers the visitor's choice on their device.
+**B. Give the keys to Netlify**
+1. Netlify → your site → **Project configuration → Security → OAuth** (older screens: **Site configuration → Access & security → OAuth**).
+2. Under **Authentication providers** click **Install provider** → **GitHub** → paste the Client ID and Client secret → **Install**.
 
-**Contact form:** checks every field (required fields, real email format, phone format, minimum lengths, POPIA consent) before sending. Spam protection: a hidden honeypot field, a block on instant "bot-speed" submissions, a 60-second pause between submissions, server-side checks of every field, a block on requests from other websites, and Netlify rate limits (contact page, and max 5 submissions per minute per IP).
+**C. Try it**
+1. Open www.finlume.co.za, scroll to the footer and click the **©** symbol **5 times quickly**.
+2. Click **Login with GitHub** → **Authorize**.
+3. Open **Website → About page**, change something, click **Publish → Publish now**. Refresh the live site after a minute or two.
 
-**Security:**
-- No secrets, passwords or API keys in the website code (checked).
-- Strict Content-Security-Policy: each page only runs its own fingerprinted code; injected scripts are blocked (tested).
-- Cannot be embedded in other websites (anti-clickjacking), `nosniff`, strict referrer and permissions policies.
-- Rate limiting (Netlify, available on all plans): `/contact` max 30 requests per minute and the form sender max 5 submissions per minute per IP address.
-- Common hacking paths (`/wp-admin`, `/.env`, `/.git`, `/admin`, `/phpmyadmin` …) return 404.
+## Using the editor
 
-**About passwords:** this website has **no logins and stores no passwords**, so there is nothing to hash or brute-force — that is the most secure setup. If a client portal or login is ever added, use a managed service (for example Netlify Identity's replacement or Auth0/Clerk) which provides bcrypt/Argon2 password hashing, login rate limiting and 2-factor login out of the box — never store passwords in the website files.
+- **Website → Home page / Services page / About page / Contact page**: headings, paragraphs, services, FAQs, values and so on.
+- **Website → Contact details & footer**: phone, WhatsApp, email, hours, address, registration number.
+- **Paragraphs**: leave an empty line between paragraphs.
+- **Lists** (services, FAQs, steps): use **Add** to add one, drag to reorder, the bin icon to remove.
+- **Founder photo**: About page → *Founder: photo* → choose a portrait photo (under 500 KB is best). Leave it empty to show "RB".
+- Nothing goes live until you click **Publish**.
 
-Protect the accounts too: turn on **two-factor login** for GitHub, Netlify, HostAfrica and the rochelle@ mailbox.
+The legal pages (Privacy Notice, Terms) and the layout and colours are not in the editor on purpose. Ask your developer to change those.
 
-## Before going fully live — please complete
+## Contact form (already set up)
 
-- **Terms page (ECT Act, section 43):** add the company registration number and physical address in `content.py` (`REG_NO`, `PHYSICAL_ADDRESS`) and rebuild — they then appear automatically.
-- Have the Privacy Notice and Terms & Conditions reviewed by your legal adviser.
-- Replace the "RB" placeholder with Rochelle's photo when available.
+Netlify → **Site configuration → Environment variables** must have:
+`SMTP_USER` = `info@finlume.co.za`, `SMTP_PASS` = that mailbox's password (marked secret), `MAIL_TO` = `info@finlume.co.za`, `FORM_SITE_NAME` = `Finlume`.
 
-## Editing later
+## Security
 
-Pages are generated from `content.py` by `build.py` (kept in the project, not uploaded). For a small text change you can edit an HTML file directly, but don't change anything inside the `<style>` or `<script>` blocks — the security policy checks their exact contents.
+- The © trick only hides the door. The real lock is the GitHub sign-in: only accounts with write access to this repository can change anything. Turn on **two-factor login** on GitHub, Netlify, HostAfrica and the info@ mailbox.
+- To let Rochelle edit with her own GitHub account: repository → **Settings → Collaborators → Add people**. (If the repository is private and Netlify then shows "Unrecognized Git contributor", either keep the repository public, which is safe because no passwords are stored in it, or edit with the GitHub account that is connected to Netlify.)
+- The editor page is hidden from search engines and has its own strict security policy: it can only talk to this site, GitHub and Netlify's sign-in.
+- Every public page keeps its strict fingerprint-based Content-Security-Policy, anti-clickjacking, HTTPS-only, rate limits and blocked hacking paths.
+
+## Troubleshooting
+
+| What you see | Fix |
+|---|---|
+| Editor says "Not Found" or "Failed to load config" after login | The OAuth provider isn't installed (step 2B), or the GitHub account has no write access to the repo |
+| Login popup closes and nothing happens | Check the callback URL in the GitHub OAuth App is exactly `https://api.netlify.com/auth/done` |
+| Published, but the live site didn't change | Netlify → Deploys: wait for the build to finish, or open the failed deploy log |
+| Deploy log says `python3: command not found` | Netlify → Site configuration → Environment variables → add `PYTHON_VERSION` = `3.12`, then redeploy |
+
+**Free plan limit:** every **Publish** in the editor starts one new Netlify deploy. Netlify's free plan gives 300 credits a month and each live deploy uses about 15, so roughly **20 publishes a month** (check Netlify → Billing → Usage). Make all your changes to a page, then publish once.

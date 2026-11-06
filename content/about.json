@@ -1,0 +1,64 @@
+{
+  "hero_title": "A new kind of finance partner for South African businesses",
+  "hero_lead": "Founder-led, qualified and committed to making your numbers make sense.",
+  "story_title": "Why Finlume exists",
+  "story": "Too many business owners make important decisions without a clear view of their finances. Records fall behind, SARS deadlines creep up, and reports, when they arrive, are hard to understand.\n\nFinlume was founded to change that. We act as your external finance department: we keep your books up to date, manage payroll and tax compliance, and turn your numbers into clear, practical insight.\n\nAs a newly launched firm, we are building every client relationship on the same foundation: accuracy, honesty and service that feels personal.",
+  "founder_name": "Rochelle Brandon",
+  "founder_role": "Founder & Director",
+  "founder_photo": "",
+  "founder_bio": "Rochelle is a qualified accountant and the founder of Finlume. She started the firm to give growing businesses the kind of finance support usually only available to large companies: accurate, reliable and explained in plain language.\n\nWhen you work with Finlume, you work directly with Rochelle. She oversees every client file personally and is committed to giving each business the clarity it needs to grow with confidence.",
+  "founder_quote": "My goal is simple: that every client finishes each month knowing exactly where their business stands, and what to do next.",
+  "vision": "To be the trusted finance partner that gives every growing South African business complete clarity over its numbers.",
+  "mission": "To deliver accurate, timely and compliant accounting, tax and advisory services, explained in plain language, so owners can make confident decisions and focus on running their business.",
+  "values": [
+    {
+      "icon": "eye",
+      "title": "Clarity",
+      "text": "We turn complex numbers into clear, honest answers you can act on."
+    },
+    {
+      "icon": "shield",
+      "title": "Integrity",
+      "text": "We do the right thing, ethically, transparently and in line with the law."
+    },
+    {
+      "icon": "target",
+      "title": "Precision",
+      "text": "Every figure is checked, reconciled and reviewed."
+    },
+    {
+      "icon": "handshake",
+      "title": "Partnership",
+      "text": "We work alongside you as part of your team, invested in your success."
+    },
+    {
+      "icon": "lock",
+      "title": "Confidentiality",
+      "text": "Your information is protected and treated with the utmost discretion."
+    }
+  ],
+  "commitments": [
+    {
+      "icon": "calendar",
+      "title": "Clear scope, fixed fees",
+      "text": "Everything is agreed in writing upfront, so there are never surprise invoices."
+    },
+    {
+      "icon": "clock",
+      "title": "Proactive deadline management",
+      "text": "We remind you before SARS and CIPC deadlines, not after."
+    },
+    {
+      "icon": "chat",
+      "title": "Regular check-ins",
+      "text": "Scheduled reviews to talk through your numbers and agree the next steps."
+    },
+    {
+      "icon": "lock",
+      "title": "Secure document handling",
+      "text": "Secure, cloud-based storage and strict confidentiality for your records."
+    }
+  ],
+  "cta_title": "Let's talk about your business",
+  "cta_text": "Start with a free consultation. We'll listen, ask the right questions and recommend a clear way forward."
+}

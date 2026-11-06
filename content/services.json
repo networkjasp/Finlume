@@ -1,0 +1,147 @@
+{
+  "hero_title": "Everything your finance function needs",
+  "hero_lead": "From day-to-day bookkeeping to year-end statements and strategic advice. Choose what you need, or let us handle it all.",
+  "services": [
+    {
+      "id": "bookkeeping",
+      "icon": "ledger",
+      "title": "Bookkeeping & Accounting",
+      "short": "Monthly processing, bank and creditor reconciliations, and cloud accounting set-up on Xero, Sage or QuickBooks.",
+      "long": "Accurate, up-to-date books are the foundation of every good decision. We process your transactions every month, keep your accounts reconciled and make sure your records are ready whenever you, SARS or your bank need them.",
+      "items": [
+        "Monthly processing of income and expenses",
+        "Bank and credit card reconciliations",
+        "Creditor and debtor reconciliations",
+        "Cloud accounting set-up and migration (Xero, Sage, QuickBooks)",
+        "Chart of accounts set-up and clean-up",
+        "Catch-up bookkeeping when records have fallen behind"
+      ]
+    },
+    {
+      "id": "payroll",
+      "icon": "payroll",
+      "title": "Payroll Services",
+      "short": "Payslips, leave, UIF and SDL, EMP201 and EMP501 submissions and IRP5 certificates, accurate and on time.",
+      "long": "Paying your team correctly and on time, and keeping SARS and the Department of Employment and Labour satisfied, takes care every month. We run your payroll and handle the submissions for you.",
+      "items": [
+        "Monthly payslips for every employee",
+        "Leave tracking and balances",
+        "UIF and SDL calculations",
+        "EMP201 monthly submissions",
+        "EMP501 bi-annual reconciliations",
+        "IRP5 employee tax certificates",
+        "Paperwork for new starters and terminations"
+      ]
+    },
+    {
+      "id": "tax",
+      "icon": "tax",
+      "title": "Tax & SARS Compliance",
+      "short": "VAT, PAYE, provisional and income tax returns for companies and individuals, plus SARS correspondence on your behalf.",
+      "long": "Tax deadlines and SARS requirements change often. We prepare and submit your returns accurately and on time, and we deal with SARS for you so you don't have to.",
+      "items": [
+        "VAT registration and VAT201 returns",
+        "PAYE administration",
+        "Provisional tax returns (IRP6)",
+        "Company income tax returns (ITR14)",
+        "Individual income tax returns (ITR12)",
+        "SARS correspondence, verifications and queries",
+        "Tax compliance status (TCS) requests"
+      ]
+    },
+    {
+      "id": "financial-statements",
+      "icon": "statements",
+      "title": "Annual Financial Statements",
+      "short": "Compiled AFS under IFRS for SMEs, with independent review arranged through trusted partners where required.",
+      "long": "Your annual financial statements tell the story of your year, for SARS, your bank, investors and your own planning. We compile clear, compliant statements prepared under IFRS for SMEs.",
+      "items": [
+        "Compiled annual financial statements",
+        "Prepared under IFRS for SMEs",
+        "Independent review arranged through trusted partners where required",
+        "Supporting schedules and year-end working papers",
+        "Figures ready for your annual tax return"
+      ]
+    },
+    {
+      "id": "management-accounts",
+      "icon": "chart",
+      "title": "Management Accounts & Reporting",
+      "short": "Monthly management packs, key performance indicators and cash-flow tracking that show how the business is doing.",
+      "long": "Management accounts show you how the business is really doing, not just once a year. We prepare a concise pack each month and walk you through what the numbers mean.",
+      "items": [
+        "Monthly management pack (income statement, balance sheet, cash flow)",
+        "Key performance indicators that matter to your business",
+        "Budget versus actual comparisons",
+        "Cash-flow tracking",
+        "Plain-language commentary and review"
+      ]
+    },
+    {
+      "id": "advisory",
+      "icon": "compass",
+      "title": "Business Advisory",
+      "short": "Budgets, forecasts and cash-flow planning, plus start-up and registration support from day one.",
+      "long": "Growing a business means making decisions with confidence. We help you plan ahead, prepare for the unexpected and set up your company properly from the start.",
+      "items": [
+        "Budgets and forecasts",
+        "Cash-flow planning",
+        "Start-up and new business support",
+        "Company registration support",
+        "Financial systems and process advice",
+        "Financial information for bank and funding applications"
+      ]
+    },
+    {
+      "id": "cipc",
+      "icon": "building",
+      "title": "CIPC & Secretarial",
+      "short": "Company registrations, CIPC annual returns and beneficial ownership filings, so your company stays in good standing.",
+      "long": "Keeping your company in good standing with the CIPC is a legal requirement. We handle the filings and changes, and remind you before anything is due.",
+      "items": [
+        "New company registrations",
+        "CIPC annual returns",
+        "Beneficial ownership filings",
+        "Director and company detail changes",
+        "Company name reservations"
+      ]
+    }
+  ],
+  "engagement": [
+    {
+      "title": "Monthly retainer",
+      "text": "Your complete, ongoing finance function for a fixed monthly fee agreed upfront.",
+      "items": [
+        "Predictable fixed monthly fee",
+        "Clear, agreed scope of work",
+        "Every deadline tracked for you",
+        "Regular check-ins and reporting"
+      ],
+      "best": "Best for businesses that want a dependable finance department."
+    },
+    {
+      "title": "Once-off projects",
+      "text": "Specific pieces of work, scoped and quoted upfront before we begin.",
+      "items": [
+        "Annual financial statements",
+        "Catch-up or clean-up bookkeeping",
+        "Company registration and CIPC filings",
+        "Cloud accounting set-up"
+      ],
+      "best": "Best for a defined task with a clear end point."
+    },
+    {
+      "title": "Ad-hoc advisory",
+      "text": "Qualified input when you need it, for a decision, a SARS letter or a plan.",
+      "items": [
+        "Budget and forecast reviews",
+        "Help with SARS correspondence",
+        "Start-up guidance",
+        "A second opinion on your numbers"
+      ],
+      "best": "Best for owners who want expert advice on demand."
+    }
+  ],
+  "cta_title": "Not sure which service you need?",
+  "cta_text": "Tell us about your business in a free consultation and we'll recommend the right mix, with a clear fixed fee."
+}
